@@ -2,15 +2,16 @@ import tkinter as tk
 from config.filepath import CW, CW_ACTIVE, CW_ATTENTION, CW_LOCK
 from config.filepath import CCW, CCW_ACTIVE, CCW_ATTENTION, CW_LOCK
 from config.filepath import BUTTONS
+from typing import TypedDict
 
 class BaseButton:
-    '''
-    カーソル滞留により状態遷移するボタン
-    '''
-    def __init__(self, name, area, cmd):
+    def __init__(self, name = None, area = None, cmd = None):
+        self.name = name
+        print(BUTTONS['forward']['normal'])
+
 def main():
-    print("This is a placeholder for the base button module.")
-    print(CW)
+    print('test')
+    a = BaseButton()
 
 
 if __name__ == '__main__':

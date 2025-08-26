@@ -1,5 +1,7 @@
 def main():
-    print("Hello from eye-controlled-gui!")
+    print("test")
+    for i in range(5):
+        print(i)
 
 
 if __name__ == "__main__":
