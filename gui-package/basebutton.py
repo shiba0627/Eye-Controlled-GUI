@@ -2,6 +2,7 @@ import tkinter as tk
 from config.filepath import CW, CW_ACTIVE, CW_ATTENTION, CW_LOCK
 from config.filepath import CCW, CCW_ACTIVE, CCW_ATTENTION, CW_LOCK
 from config.filepath import BUTTONS
+from config.config import BUTTON_SIZE_RATIO
 from typing import TypedDict
 
 class BaseButton:
@@ -30,9 +31,13 @@ class GUIapp():
             ('back', 1/2, 5/6, 'z')
         ]
 
+        self.button_seze_ratio = 0.13 
         self.buttons = []#各ボタンのオブジェクトを格納するリスト
         for name, center_x_ratio, center_y_ratio, cmd in button_list:
-            
+            center_x = center_x_ratio * self.width
+            center_y = center_y_ratio * self.height
+        print(f'width = {self.width}, height = {self.height}')
+    def _calc_area(button_size_ratio, ):
 
 
 

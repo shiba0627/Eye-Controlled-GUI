@@ -26,7 +26,7 @@ STOP_ACTIVE = './img/arrows/stop_active.png'
 STOP_ATTENTION = './img/arrows/stop_attention.png'
 STOP_LOCK = './img/arrows/stop_lock.png'
 
-
+# ボタン画像のファイルパス 各ボタンに4つの状態がある
 BUTTONS = {
     'forward': {
         'normal': './img/arrows/forward.png',
