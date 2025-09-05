@@ -2,7 +2,7 @@ import tkinter as tk
 from config.filepath import CW, CW_ACTIVE, CW_ATTENTION, CW_LOCK
 from config.filepath import CCW, CCW_ACTIVE, CCW_ATTENTION, CW_LOCK
 from config.filepath import BUTTONS
-from config.config import BUTTON_SIZE_RATIO
+from config.static import BUTTON_SIZE_RATIO
 from typing import TypedDict
 
 class BaseButton:
