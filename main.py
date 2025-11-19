@@ -8,7 +8,6 @@ import socket
 import json
 import cv2
 import numpy as np
-
 # ==== 定数設定 ====
 BUTTON_SIZE = 250
 HOVER_TIME  = 0.5
