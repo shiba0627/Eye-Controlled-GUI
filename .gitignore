@@ -8,3 +8,92 @@ wheels/
 
 # Virtual environments
 .venv
+
+# ==============================
+# Visual Studio
+# ==============================
+
+## Visual Studio 一般
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+ipch/
+*.VC.db
+*.VC.opendb
+*.ncb
+*.opensdf
+*.sdf
+
+## ビルド出力
+Debug*/
+Release*/
+x64/
+x86/
+build*/
+*.obj
+*.o
+*.exe
+*.dll
+*.lib
+*.pdb
+*.idb
+*.ipdb
+*.ilk
+
+## バイナリ生成物
+*.app
+*.iobj
+*.pch
+*.ipch
+*.res
+*.rsp
+
+# ==============================
+# Qt
+# ==============================
+
+# Qt Creator プロジェクトファイル
+*.pro.user
+*.qmake.stash
+*.qrc~
+
+# MOC / UI コンパイル生成ファイル
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+# Qt のビルドディレクトリ
+build-*/
+
+# その他の自動生成ファイル
+*.obj
+*.o
+*.so
+*.a
+*.dll
+*.exe
+
+# ==============================
+# OS 一般
+# ==============================
+
+# Windows サムネイルや一時ファイル
+Thumbs.db
+Desktop.ini
+*.log
+*.tmp
+*.bak
+*.swp
+
+# macOS
+.DS_Store
+
+# ==============================
+# Python / スクリプト関連（もしあれば）
+# ==============================
+__pycache__/
+*.pyc
+*.pyo
