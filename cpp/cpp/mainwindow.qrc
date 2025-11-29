@@ -1,4 +1,33 @@
 <RCC>
-    <qresource prefix="MainWindow">
+    <qresource prefix="/MainWindow">
+        <file>img/back.png</file>
+        <file>img/back_active.png</file>
+        <file>img/back_attention.png</file>
+        <file>img/back_lock.png</file>
+        <file>img/ccw.png</file>
+        <file>img/ccw_active.png</file>
+        <file>img/ccw_attention.png</file>
+        <file>img/ccw_lock.png</file>
+        <file>img/cw.png</file>
+        <file>img/cw_active.png</file>
+        <file>img/cw_attention.png</file>
+        <file>img/cw_lock.png</file>
+        <file>img/forward.png</file>
+        <file>img/forward_active.png</file>
+        <file>img/forward_attention.png</file>
+        <file>img/forward_lock.png</file>
+        <file>img/minus.png</file>
+        <file>img/minus_active.png</file>
+        <file>img/minus_attention.png</file>
+        <file>img/plus.png</file>
+        <file>img/plus_active.png</file>
+        <file>img/plus_attention.png</file>
+        <file>img/setting.png</file>
+        <file>img/setting_active.png</file>
+        <file>img/setting_attention.png</file>
+        <file>img/stop.png</file>
+        <file>img/stop_active.png</file>
+        <file>img/stop_attention.png</file>
+        <file>img/stop_lock.png</file>
     </qresource>
 </RCC>
