@@ -4,10 +4,12 @@
 #include <QResizeEvent>
 #include <QLabel>
 #include <QPixmap>
+#include<qdebug.h>
 
 MainWindow::MainWindow(QWidget *parent)//コンストラクタ
     : QMainWindow(parent)
 {
+    qDebug() << "test";
     //this->resize(500, 500);
     //ui.setupUi(this);
     //全画面表示(ウィンドウ残し)
@@ -54,8 +56,8 @@ void MainWindow::resizeEvent(QResizeEvent* event)
         labels[i]->setGeometry(x, y, label_w, label_h);
 
         // pixmapをリサイズして設定
-        //QPixmap scaledPix = pixmaps[i].scaled(label_w, label_h, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        QPixmap scaledPix = pixmaps[i].scaled(label_w, label_h, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+        QPixmap scaledPix = pixmaps[i].scaled(label_w, label_h, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        //QPixmap scaledPix = pixmaps[i].scaled(label_w, label_h, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 
         labels[i]->setPixmap(scaledPix);
     }
