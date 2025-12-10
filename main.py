@@ -118,6 +118,7 @@ class GUIApp:
         self.root.update_idletasks()
         self.width  = self.root.winfo_width()
         self.height = self.root.winfo_height()
+        print(f'width={self.width}, height={self.height}')
         self.canvas = tk.Canvas(self.root, width=self.width, height=self.height)
         self.canvas.pack(fill="both", expand=True)
 
