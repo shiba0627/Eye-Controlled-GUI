@@ -5,7 +5,8 @@ import time
 from enum import Enum
 
 HOVER_TIME = 0.5
-BUTTON_SIZE_RATIO = 0.16#ボタンサイズ 画面横幅の何倍か
+BUTTON_SIZE_RATIO = 0.18#ボタンサイズ 画面横幅の何倍か
+SETTING_SIZE_RATIO = 0.12
 ARC_RADIUS = 30
 DEFAULT_SPEED = 5#スピード初期値
 MAX_SPEED = 10
@@ -84,7 +85,7 @@ class ControlFrame(BaseFrame):# 操作画面
             area = self._calc_area(BUTTON_SIZE_RATIO, center_x_ratio,center_y_ratio)
             self.buttons.append(ControlButton(self.canvas, img, active, lock, attention, area, cmd))
         #設定ボタンについて
-        area = self._calc_area(0.1, 9/10, 8/10)
+        area = self._calc_area(SETTING_SIZE_RATIO, 9/10, 8/10)
         self.buttons.append(ControlButton(self.canvas, SETTING, SETTING_ACTIVE, '_', SETTING_ATTENTION, area, 'g'))
         self.check_cursor()
     def check_cursor(self):
@@ -119,7 +120,6 @@ class SettingFrame(BaseFrame):
         # テキストIDを保存して後で書き換えられるようにする
         self.speed_text_id = self.canvas.create_text(cx, cy, text=str(self.app.speed), font=("Arial", 80, "bold"))
 
-
         button_list = [
             (PLUS, PLUS_ACTIVE, '_', PLUS_ATTENTION, 1/4, 3/6, '+'),
             (MINUS, MINUS_ACTIVE, '_', MINUS_ATTENTION, 3/4, 3/6, '-'),
@@ -129,7 +129,7 @@ class SettingFrame(BaseFrame):
             self.buttons.append(SpeedButton(self.canvas, img, active, lock, attention, area, cmd))
         
         #設定ボタンについて
-        area = self._calc_area(0.1, 9/10, 2/10)
+        area = self._calc_area(SETTING_SIZE_RATIO, 9/10, 2/10)
         self.buttons.append(ControlButton(self.canvas, SETTING, SETTING_ACTIVE,'_', SETTING_ATTENTION, area, 'g'))
         self.check_cursor()
 
