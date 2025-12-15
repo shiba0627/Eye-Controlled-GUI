@@ -12,7 +12,8 @@ print(list)
 file_name = f'output/testtxt_{now_micro}.txt'
 try:
     with open(file_name, 'w', encoding='utf-8') as f:
-        f.write(list)
+        for v in list:
+            f.write(f"{v}\n")
 except IOError as e:
     print(e)
 
