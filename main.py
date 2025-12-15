@@ -184,7 +184,7 @@ class GUIApp:
 
     def send_command(self, cmd):
         """Joy相当のデータをUDP送信"""
-        if cmd == 'w':   msg = "0.0, 0.1"
+        if cmd == 'w':   msg = "0.0, 0.15"
         elif cmd == 'z': msg = "0.0, -0.15"
         elif cmd == 'a': msg = "0.15, 0.0"
         elif cmd == 'd': msg = "-0.15, 0.0"
@@ -332,7 +332,7 @@ class GUIApp:
         self.update_image_display()
 
         #self.root.after(33, self.check_cursor) # 約30fps
-        self.root.after(20, self.check_cursor)
+        self.root.after(50, self.check_cursor)
 
     def run(self):
         self.root.mainloop()

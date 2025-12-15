@@ -24,7 +24,7 @@ FORWARD_LOCK, BACK_LOCK, CW_LOCK, CCW_LOCK, STOP_LOCK = [p.replace('.png', '_loc
 
 class ImageCache:
     _cache = {}
-
+    
     @classmethod
     def load(cls, path, size):
         key = (path, size)
