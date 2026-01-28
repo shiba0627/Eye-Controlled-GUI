@@ -377,13 +377,13 @@ class QuestionFrame(BaseFrame):
         )
 
         # === 回答ボタン ===
-        if q_idx % 2 == 0:
+        if q_idx % 2 == 1:
             button_list = [
                 (BAD,  BAD_ACTIVE,  BAD_ATTENTION, 3/4, 4/6, 'BAD'),
                 (SOSO, SOSO_ACTIVE, SOSO_ATTENTION, 2/4, 4/6, 'SOSO'),
                 (GOOD, GOOD_ACTIVE, GOOD_ATTENTION, 1/4, 4/6, 'GOOD'),
             ]
-        elif q_idx % 2 == 1:
+        elif q_idx % 2 == 0:
             button_list = [
                 (BAD,  BAD_ACTIVE,  BAD_ATTENTION, 3/4, 2/6, 'BAD'),
                 (SOSO, SOSO_ACTIVE, SOSO_ATTENTION, 2/4, 2/6, 'SOSO'),
