@@ -40,6 +40,7 @@ SETTING_ACTIVE = './img/setting_active.png'
 class FrameName:
     READY = 'ready'
     QUESTION = 'question'
+    ANSWER = 'answer'
     RESULT = 'result'
     SETTING = 'setting'
 
