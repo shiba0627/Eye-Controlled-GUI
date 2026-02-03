@@ -1,31 +1,18 @@
 import tkinter as tk
+import os
+from PIL import Image, ImageTk
+from enum import Enum
 import time
 from datetime import datetime
-from base import ImageCache
 
-#パラメータ
-HOVER_TIME = 0.4
+
+from base import ImageCache
+HOVER_TIME = 0.5
 BUTTON_SIZE_RATIO = 0.12#ボタンサイズ 画面横幅の何倍か
 SETTING_SIZE_RATIO = 0.12
 ARC_RADIUS = 30
 DEFAULT_SPEED = 5#スピード初期値
 MAX_SPEED = 10
-
-#ボタン画像
-BAD = './img/questionnaire/bad.png'
-BAD_ATTENTION = './img/questionnaire/bad_attention.png'
-BAD_ACTIVE = './img/questionnaire/bad_active.png'
-SOSO = './img/questionnaire/soso.png'
-SOSO_ATTENTION = './img/questionnaire/soso_attention.png'
-SOSO_ACTIVE = './img/questionnaire/soso_active.png'
-GOOD = './img/questionnaire/good.png'
-GOOD_ATTENTION = './img/questionnaire/good_attention.png'
-GOOD_ACTIVE = './img/questionnaire/good_active.png'
-
-NEXT = './img/questionnaire/next.png'
-NEXT_ATTENTION = './img/questionnaire/next_attention.png'
-BACK = './img/questionnaire/return.png'
-BACK_ATTENTION = './img/questionnaire/return_attention.png'
 
 PLUS = './img/plus.png'
 PLUS_ATTENTION = './img/plus_attention.png'
@@ -41,14 +28,30 @@ SELECTED = './img/number/number_selected.png'
 SETTING = './img/setting.png'
 SETTING_ATTENTION = './img/setting_attention.png'
 SETTING_ACTIVE = './img/setting_active.png'
+ONE = './img/number/number_1.png'
+ONE_ATTENTION = './img/number/number_1_attention.png'
+TWO = './img/number/number_2.png'
+TWO_ATTENTION = './img/number/number_2_attention.png'
+THREE='./img/number/number_3.png'
+THREE_ATTENTION = './img/number/number_3_attention.png'
+FOUR='./img/number/number_4.png'
+FOUR_ATTENTION = './img/number/number_4_attention.png'
+FIVE='./img/number/number_5.png'
+FIVE_ATTENTION = './img/number/number_5_attention.png'
+SIX='./img/number/number_6.png'
+SIX_ATTENTION = './img/number/number_6_attention.png'
+SEVEN='./img/number/number_7.png'
+SEVEN_ATTENTION = './img/number/number_7_attention.png'
+EIGHT='./img/number/number_8.png'
+EIGHT_ATTENTION = './img/number/number_8_attention.png'
+NINE='./img/number/number_9.png'
+NINE_ATTENTION = './img/number/number_9_attention.png'
 
 class FrameName:
     READY = 'ready'
-    QUESTION = 'question'
-    ANSWER = 'answer'
+    GAME = 'game'
     RESULT = 'result'
     SETTING = 'setting'
-
 
 class BaseButton:# ボタンのベースクラス
     def __init__(self, canvas, img_path, active_path, lock_path, attention_path, area, cmd, hover_time):
@@ -147,9 +150,8 @@ class SpeedButton(BaseButton):
         else:
             self.set_nomal()
         return None
-    
 class NumberButton:# ボタンのベースクラス
-    def __init__(self, canvas, img_path, attention_path, active_path, area, cmd, hover_time):
+    def __init__(self, canvas, img_path,  attention_path, active_path, area, cmd, hover_time):
         self.canvas = canvas
         width = int(area[2] - area[0])
         height = int(area[3] - area[1])
@@ -250,11 +252,11 @@ class BaseFrame(tk.Frame):
         active_obj = None#新たにアクティブになったボタンのオブジェクト
         for button in self.buttons:
             active_cmd = button.update(x,y)
-            if active_cmd == 'question':
-                self.app.show_frame(FrameName.QUESTION)
-            elif active_cmd == 'ready':
+            if active_cmd == 'game':
+                self.app.show_frame(FrameName.GAME)
+            elif active_cmd == 're':
                 self.app.show_frame(FrameName.READY)
-            elif active_cmd == 'setting':
+            elif active_cmd == 'set':
                 self.app.show_frame(FrameName.SETTING)
 
             if active_cmd is not None:#新たにアクティブになったボタンがあるなら
@@ -267,30 +269,129 @@ class BaseFrame(tk.Frame):
         else:
             pass
         self.master.after(20, self.check_cursor)
+class GameFrame(BaseFrame):# 操作画面
+    def __init__(self, master = None, app_instance = None):
+        super().__init__(master,  app_instance)
+        self.next_number = 1
+        self.max_number = 9
+        self.canvas.config(bg="#ADD8E6")
+        button_list = [
+    (ONE,   ONE_ATTENTION,   SELECTED, 1/3, 1/2, 1),
+    (TWO,   TWO_ATTENTION,   SELECTED, 1/2, 3/4, 2),
+    (THREE, THREE_ATTENTION, SELECTED, 2/3, 1/2, 3),
 
+    (FOUR,  FOUR_ATTENTION,  SELECTED, 1/3, 1/4, 4),
+    (FIVE,  FIVE_ATTENTION,  SELECTED, 2/3, 1/4, 5),
+
+    (SIX,   SIX_ATTENTION,   SELECTED, 1/2, 1/2, 6),
+
+    (SEVEN, SEVEN_ATTENTION, SELECTED, 2/3, 3/4, 7),
+    (EIGHT, EIGHT_ATTENTION, SELECTED, 1/2, 1/4, 8),
+
+    (NINE,  NINE_ATTENTION,  SELECTED, 1/3, 3/4, 9),
+
+]
+
+        for img, attention, selected, center_x_ratio, center_y_ratio, cmd in button_list:
+            area = self._calc_area(self.app.button_size_ratio, center_x_ratio,center_y_ratio)
+            self.buttons.append(NumberButton(self.canvas, img, attention, selected, area, cmd, self.app.hover_time))
+        self.check_cursor()
+
+    def check_cursor(self):
+        x = self.master.winfo_pointerx() - self.master.winfo_rootx()
+        y = self.master.winfo_pointery() - self.master.winfo_rooty()
+
+
+        #各ボタンにマウス位置を通知
+        active_obj = None#新たにアクティブになったボタンのオブジェクト
+        for button in self.buttons:
+            active_cmd = button.update(x,y)
+            if isinstance(active_cmd, int)  and self.next_number < active_cmd :
+                button.set_nomal()
+            if self.next_number == active_cmd:
+                self.next_number += 1
+                print(self.next_number)
+            if active_cmd == 'game':
+                self.app.show_frame(FrameName.GAME)
+            if active_cmd is not None:#新たにアクティブになったボタンがあるなら
+                active_obj = button#アクティブなボタンのオブジェクトを保存
+        if self.next_number == 10 and active_cmd == 9:
+            self.app.end_time = time.time()
+            self.app.show_frame(FrameName.RESULT)
+        #全体のボタン状態の管理
+        if self.next_number == 2:
+            self.buttons[0].set_active()
+        elif self.next_number == 3:
+            self.buttons[0].set_active()
+            self.buttons[1].set_active()
+        elif self.next_number == 4:
+            self.buttons[0].set_active()
+            self.buttons[1].set_active()
+            self.buttons[2].set_active()
+
+        elif self.next_number == 5:
+            self.buttons[0].set_active()
+            self.buttons[1].set_active()
+            self.buttons[2].set_active()
+            self.buttons[3].set_active()
+
+        elif self.next_number == 6:
+            self.buttons[0].set_active()
+            self.buttons[1].set_active()
+            self.buttons[2].set_active()
+            self.buttons[3].set_active()
+            self.buttons[4].set_active()
+
+        elif self.next_number == 7:
+            self.buttons[0].set_active()
+            self.buttons[1].set_active()
+            self.buttons[2].set_active()
+            self.buttons[3].set_active()
+            self.buttons[4].set_active()
+            self.buttons[5].set_active()
+        elif self.next_number == 8:
+            self.buttons[0].set_active()
+            self.buttons[1].set_active()
+            self.buttons[2].set_active()
+            self.buttons[3].set_active()
+            self.buttons[4].set_active()
+            self.buttons[5].set_active()
+            self.buttons[6].set_active()
+
+        elif self.next_number == 9:
+            self.buttons[0].set_active()
+            self.buttons[1].set_active()
+            self.buttons[2].set_active()
+            self.buttons[3].set_active()
+            self.buttons[4].set_active()
+            self.buttons[5].set_active()
+            self.buttons[6].set_active()
+            self.buttons[7].set_active()
+        self.master.after(20, self.check_cursor)
 class ReadyFrame(BaseFrame):# 準備画面
     def __init__(self, master = None, app_instance = None):
         super().__init__(master,  app_instance)
         self.canvas.config(bg="#B8B7DF")
-        cx = self.width * 0.5
-        cy = self.height * 1/4
-        self.canvas.create_text(cx, cy, text=f"質問は5個です。\n気軽に答えてください！", font=("Arial", 90))
         button_list = [
-            (START, START_ATTENTION, SELECTED,  4/5, 2/3, 'question'),
-            (SETTING, SETTING_ATTENTION, SELECTED, 1/2, 2/3, 'setting')]
+            (START, START_ATTENTION, SELECTED,  4/5, 1/2, 'game'),
+            (SETTING, SETTING_ATTENTION, SELECTED, 1/2, 1/2, 'set')]
         for img, attention, selected, center_x_ratio, center_y_ratio, cmd in button_list:
             area = self._calc_area(0.2, center_x_ratio,center_y_ratio)
             self.buttons.append(NumberButton(self.canvas, img, attention, selected, area, cmd, self.app.hover_time))
         self.check_cursor()
-
 class ResultFrame(BaseFrame):
     def __init__(self, master = None, app_instance = None):
         super().__init__(master,  app_instance)
         self.canvas.config(bg="#DFB7B7")
-        cx = self.width * 0.5
+        cx = self.width * 0.35
         cy = self.height * 1/3
         t=self.app.end_time - self.app.start_time
-        self.canvas.create_text(cx, cy - 10, text=f"ありがとうございました！", font=("Arial", 90))
+        self.canvas.create_text(cx, cy - 100, text=f"クリアタイム：{t:.0f}秒！！", font=("Arial", 90))
+        button_list = [
+            (RETRY, RETRY_ATTENTION, SELECTED,  1/5, 1/2, 're'),]
+        for img, attention, selected, center_x_ratio, center_y_ratio, cmd in button_list:
+            area = self._calc_area(0.2, center_x_ratio,center_y_ratio)
+            self.buttons.append(NumberButton(self.canvas, img, attention, selected, area, cmd, self.app.hover_time))
         now = datetime.now()
         now_micro = now.strftime('%Y%m%d_%H%M%S')
         file_name = f'output/result_{now_micro}.txt'
@@ -298,10 +399,6 @@ class ResultFrame(BaseFrame):
             with open(file_name, 'w', encoding='utf-8') as f:
                     f.write(f"{t}秒\n")
                     f.write(f'滞留時間{self.app.hover_time}秒')
-                    # 回答内容
-                    f.write("【回答結果】\n")
-                    for i, ans in enumerate(self.app.answers, start=1):
-                        f.write(f"Q{i}: {ans}\n")
         except IOError as e:
             print(e)
         self.check_cursor()
@@ -328,7 +425,7 @@ class SettingFrame(BaseFrame):
         
         #設定ボタンについて
         area = self._calc_area(SETTING_SIZE_RATIO, 9/10, 2/10)
-        self.buttons.append(NumberButton(self.canvas, SETTING, SETTING_ACTIVE,SETTING_ATTENTION, area, 'setting', self.app.hover_time))
+        self.buttons.append(NumberButton(self.canvas, SETTING, SETTING_ACTIVE,SETTING_ATTENTION, area, 'set', self.app.hover_time))
         self.check_cursor()
 
     def update_speed_display(self):
@@ -342,7 +439,7 @@ class SettingFrame(BaseFrame):
         active_obj = None#新たにアクティブになったボタンのオブジェクト
         for button in self.buttons:
             active_cmd = button.update(x,y)#今フレームでアクティブになったボタン
-            if active_cmd == 'setting':
+            if active_cmd == 'set':
                 self.app.show_frame(FrameName.READY)#controlに遷移
                 return
             elif active_cmd == '+':
@@ -364,134 +461,8 @@ class SettingFrame(BaseFrame):
         else:
             pass
         self.master.after(20, self.check_cursor)
-class QuestionFrame(BaseFrame):
-    
-    def __init__(self, master=None, app_instance=None):
-        super().__init__(master, app_instance)
-        self.canvas.config(bg="#EFEFEF")
-
-        q_idx = self.app.question_index
-        question_text = self.app.questions[q_idx]
-
-        # === 設問表示 ===
-        self.canvas.create_text(
-            self.width / 2,
-            self.height * 0.15,
-            text=question_text,
-            font=("Arial", 60),
-            width=self.width * 0.8
-        )
-
-        # === 次へ、戻るボタン ===
-
-        button_list = [
-            (NEXT, NEXT_ATTENTION, NEXT_ATTENTION, 3/4, 3/4, 'NEXT'),
-        ]
-
-
-        for img, active, attention, cx, cy, cmd in button_list:
-            area = self._calc_area(0.15, cx, cy)
-            self.buttons.append(
-                BaseButton(
-                    self.canvas,
-                    img,
-                    active,
-                    img,          # lock 未使用
-                    attention,
-                    area,
-                    cmd,
-                    self.app.hover_time
-                )
-            )
-
-        self.check_cursor()
-
-    def check_cursor(self):
-        x = self.master.winfo_pointerx() - self.master.winfo_rootx()
-        y = self.master.winfo_pointery() - self.master.winfo_rooty()
-
-        for button in self.buttons:
-            active_cmd = button.update(x, y)
-            if active_cmd == ('NEXT'):
-                self.on_answer(active_cmd)
-                return
-
-        self.master.after(20, self.check_cursor)
-
-    def on_answer(self, answer):
-        # 回答画面へ
-        next_frame = FrameName.ANSWER
-        self.app.show_frame(next_frame)
-class AnswerFrame(BaseFrame):
-    def __init__(self, master = None, app_instance = None):
-        super().__init__(master, app_instance)
-        self.canvas.config(bg="#EFEFEF")
-        q_idx = self.app.question_index
-        question_text = self.app.questions[q_idx]
-    # === 回答ボタン ===
-        
-        button_list = [
-            (BAD,  BAD_ACTIVE,  BAD_ATTENTION, 3/4, 2/6, 'BAD'),
-            (SOSO, SOSO_ACTIVE, SOSO_ATTENTION, 2/4, 2/6, 'SOSO'),
-            (GOOD, GOOD_ACTIVE, GOOD_ATTENTION, 1/4, 2/6, 'GOOD'),
-            (NEXT, NEXT_ATTENTION, NEXT_ATTENTION, 1/4, 3/4, 'NEXT'),
-        ]
-        
-        for img, active, attention, cx, cy, cmd in button_list:
-            area = self._calc_area(0.15, cx, cy)
-            self.buttons.append(
-                BaseButton(
-                    self.canvas,
-                    img,
-                    active,
-                    img,          # lock 未使用
-                    attention,
-                    area,
-                    cmd,
-                    self.app.hover_time
-                )
-            )
-
-        self.check_cursor()
-    def check_cursor(self):
-        x = self.master.winfo_pointerx() - self.master.winfo_rootx()
-        y = self.master.winfo_pointery() - self.master.winfo_rooty()
-
-        for button in self.buttons:
-            active_cmd = button.update(x, y)
-            if active_cmd in ('GOOD', 'SOSO', 'BAD'):
-                self.on_answer(active_cmd)
-                return
-
-        self.master.after(20, self.check_cursor)
-
-    def on_answer(self, answer):
-        # 回答保存
-        self.app.answers.append(answer)
-        self.app.question_index += 1
-
-        # 次へ
-        if self.app.question_index >= len(self.app.questions):
-            self.app.end_time = time.time()
-            self.app.show_frame(FrameName.RESULT)
-        else:
-            next_frame = FrameName.QUESTION
-            self.app.show_frame(next_frame)
-
 class mainApp:
     def __init__(self):
-        # 質問リスト
-        self.questions = [
-            "とりくみがある日の朝の気分はどうでしたか？",
-            "とりくみがおわった後の気分はどうでしたか？",
-            "とりくみはつかれますか？",
-            "おもったとおりに操縦できましたか？",
-            "来年度もこのとりくみをしたいですか？",
-        ]
-        #現在の質問番号
-        self.question_index = 0
-        self.answers = []  # ('GOOD' / 'SOSO' / 'BAD')
-
         #全体で共有するデータを定義
         self.root = tk.Tk()
         self.root.title('eye controll game')
@@ -508,14 +479,12 @@ class mainApp:
             self.current_frame.destroy()
         if frame_name == FrameName.READY:
             self.current_frame = ReadyFrame(self.root, self)
-        elif frame_name == FrameName.QUESTION:
-            self.current_frame = QuestionFrame(self.root, self)
+        elif frame_name == FrameName.GAME:
+            self.current_frame = GameFrame(self.root, self)
         elif frame_name == FrameName.RESULT:
             self.current_frame = ResultFrame(self.root, self)
         elif frame_name == FrameName.SETTING:
             self.current_frame = SettingFrame(self.root, self)
-        elif frame_name == FrameName.ANSWER:
-            self.current_frame = AnswerFrame(self.root, self)
     def run(self):
         self.root.mainloop()
 

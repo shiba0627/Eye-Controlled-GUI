@@ -385,7 +385,7 @@ class QuestionFrame(BaseFrame):
         # === 次へ、戻るボタン ===
 
         button_list = [
-            (NEXT, NEXT_ATTENTION, NEXT_ATTENTION, 3/4, 3/4, 'NEXT'),
+            (NEXT, NEXT_ATTENTION, NEXT_ATTENTION, 1/4, 3/4, 'NEXT'),
         ]
 
 
@@ -412,7 +412,7 @@ class QuestionFrame(BaseFrame):
 
         for button in self.buttons:
             active_cmd = button.update(x, y)
-            if active_cmd == ('NEXT'):
+            if active_cmd == 'NEXT':
                 self.on_answer(active_cmd)
                 return
 
@@ -423,20 +423,22 @@ class QuestionFrame(BaseFrame):
         next_frame = FrameName.ANSWER
         self.app.show_frame(next_frame)
 class AnswerFrame(BaseFrame):
-    def __init__(self, master = None, app_instance = None):
+    def __init__(self, master=None, app_instance=None):
         super().__init__(master, app_instance)
         self.canvas.config(bg="#EFEFEF")
         q_idx = self.app.question_index
         question_text = self.app.questions[q_idx]
-    # === 回答ボタン ===
         
+        self.selected_cmd = None  # ★現在選択されている回答を保存する変数
+
+        # === 回答ボタン ===
         button_list = [
             (BAD,  BAD_ACTIVE,  BAD_ATTENTION, 3/4, 2/6, 'BAD'),
             (SOSO, SOSO_ACTIVE, SOSO_ATTENTION, 2/4, 2/6, 'SOSO'),
             (GOOD, GOOD_ACTIVE, GOOD_ATTENTION, 1/4, 2/6, 'GOOD'),
-            (NEXT, NEXT_ATTENTION, NEXT_ATTENTION, 1/4, 3/4, 'NEXT'),
+            (NEXT, NEXT_ATTENTION, NEXT_ATTENTION, 3/4, 3/4, 'NEXT'), # NEXTボタン
         ]
-        
+
         for img, active, attention, cx, cy, cmd in button_list:
             area = self._calc_area(0.15, cx, cy)
             self.buttons.append(
@@ -453,15 +455,42 @@ class AnswerFrame(BaseFrame):
             )
 
         self.check_cursor()
+
     def check_cursor(self):
+        # 画面が閉じられた後の安全策
+        if not self.winfo_exists():
+            return
+
         x = self.master.winfo_pointerx() - self.master.winfo_rootx()
         y = self.master.winfo_pointery() - self.master.winfo_rooty()
 
         for button in self.buttons:
             active_cmd = button.update(x, y)
+
+            # === 1. 回答ボタン('GOOD', 'SOSO', 'BAD')が確定した場合 ===
             if active_cmd in ('GOOD', 'SOSO', 'BAD'):
-                self.on_answer(active_cmd)
-                return
+                # ★ここが重要: on_answer()を呼ばず、変数に保存するだけにする
+                self.selected_cmd = active_cmd
+                
+                # 選び直し対応: 今選んだボタン以外をノーマル（未選択）に戻す
+                for other_btn in self.buttons:
+                    if other_btn != button and other_btn.cmd in ('GOOD', 'SOSO', 'BAD'):
+                        other_btn.set_nomal()
+            
+            # === 2. NEXTボタンが確定した場合 ===
+            elif active_cmd == 'NEXT':
+                # 回答が選択されている場合のみ、ここで初めて遷移する
+                if self.selected_cmd is not None:
+                    self.on_answer(self.selected_cmd)
+                    return # 画面遷移するのでループを抜ける
+                else:
+                    # まだ選んでいない場合はNEXTボタンを無効表示に戻す
+                    button.set_nomal()
+
+            # === 3. 選択状態の維持（見た目の処理） ===
+            # カーソルが外れても、選択中の回答ボタンはずっと光らせておく
+            if self.selected_cmd == button.cmd:
+                button.set_active()
 
         self.master.after(20, self.check_cursor)
 
@@ -477,16 +506,22 @@ class AnswerFrame(BaseFrame):
         else:
             next_frame = FrameName.QUESTION
             self.app.show_frame(next_frame)
-
 class mainApp:
     def __init__(self):
         # 質問リスト
         self.questions = [
-            "とりくみがある日の朝の気分はどうでしたか？",
-            "とりくみがおわった後の気分はどうでしたか？",
-            "とりくみはつかれますか？",
-            "おもったとおりに操縦できましたか？",
-            "来年度もこのとりくみをしたいですか？",
+            "視線による電動車椅子の操縦は上達したと思いますか？",
+            "視線による電動車いすの操縦は楽しいですか？",
+            "日常で使用している車いすと比較して操縦は簡単ですか？",
+            "日常で使用している車いすと比較して走行は快適ですか？",
+            "視線で操縦する電動車いすを日常でも使いたいですか？",
+            "操縦用のアプリの色分けはわかりやすいですか？",
+            "操縦用のアプリ操作方法は直感的にわかりやすいですか？",
+            "操縦用のアプリのシンボルは操作しやすい配置ですか？",
+            "電動車いすの自動停止の機能は安心感がありましたか？",
+            "自動停止の機能になるべく頼らず走行したいと思いますか？",
+            "数字消しアプリは３パターンありましたが難しさに差はありましたか？",
+
         ]
         #現在の質問番号
         self.question_index = 0
