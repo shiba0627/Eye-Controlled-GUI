@@ -1,16 +1,17 @@
 
 import os
 import tkinter as tk
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageGrab
 import time
 import threading
 import socket
 import json
 import cv2
 import numpy as np
+from datetime import datetime
 # ==== 定数設定 ====
 BUTTON_SIZE = 250
-HOVER_TIME  = 0.5
+HOVER_TIME  = 0.4
 ARC_RADIUS  = 30
 
 #SERVER_HOST = '192.168.1.102'#有線
@@ -118,7 +119,8 @@ class GUIApp:
         self.root.update_idletasks()
         self.width  = self.root.winfo_width()
         self.height = self.root.winfo_height()
-        print(f'width={self.width}, height={self.height}')
+        self.log=[]
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close)#終了を検出
         self.canvas = tk.Canvas(self.root, width=self.width, height=self.height)
         self.canvas.pack(fill="both", expand=True)
 
@@ -166,7 +168,12 @@ class GUIApp:
     def calc_area(self, cx, cy):
         half = BUTTON_SIZE / 2
         return (cx - half, cy - half, cx + half, cy + half)
-        
+    def logger(self, cmd):
+        if cmd is None:
+            return 
+        now = datetime.now()
+        self.log.append(str(now)+' ' +cmd)
+    
     def update_lock_status(self, locked_cmds):
         """ボタンのロック状態をGUIに反映"""
         for cmd, button in self.button_map.items():
@@ -184,10 +191,10 @@ class GUIApp:
 
     def send_command(self, cmd):
         """Joy相当のデータをUDP送信"""
-        if cmd == 'w':   msg = "0.0, 0.15"
+        if cmd == 'w':   msg = "0.0, 0.11"
         elif cmd == 'z': msg = "0.0, -0.15"
-        elif cmd == 'a': msg = "0.15, 0.0"
-        elif cmd == 'd': msg = "-0.15, 0.0"
+        elif cmd == 'a': msg = "0.18, 0.0"
+        elif cmd == 'd': msg = "-0.18, 0.0"
         else:            msg = "0.0, 0.0"
 
         try:
@@ -319,6 +326,7 @@ class GUIApp:
             if cmd:
                 activated_button_this_frame = button
                 self.last_sent_data = cmd
+                self.logger(cmd)
 
         if activated_button_this_frame and self.last_activated_button != activated_button_this_frame:
             if self.last_activated_button:
@@ -327,12 +335,28 @@ class GUIApp:
 
         # 常に self.last_sent_data に基づいてコマンドを送信
         threading.Thread(target=self.send_command, args=(self.last_sent_data,), daemon=True).start()
-        
+        #self.send_command(self.last_sent_data)
         # 画像表示を更新
         self.update_image_display()
 
         #self.root.after(33, self.check_cursor) # 約30fps
         self.root.after(50, self.check_cursor)
+    def on_close(self):
+        self.save_log()
+        self.root.destroy()
+    def save_log(self):
+        if not self.log:
+            return
+
+        log_dir = "output"
+        os.makedirs(log_dir, exist_ok=True)
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filepath = os.path.join(log_dir, f"mainLOG_{timestamp}.txt")
+
+        with open(filepath, "w", encoding="utf-8") as f:
+            for line in self.log:
+                f.write(line + "\n")
 
     def run(self):
         self.root.mainloop()
