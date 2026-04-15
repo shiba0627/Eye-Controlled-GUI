@@ -11,7 +11,7 @@ import numpy as np
 from datetime import datetime
 # ==== 定数設定 ====
 BUTTON_SIZE = 250
-HOVER_TIME  = 0.4
+HOVER_TIME  = 0.5
 ARC_RADIUS  = 30
 
 #SERVER_HOST = '192.168.1.102'#有線

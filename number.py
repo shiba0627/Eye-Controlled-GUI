@@ -474,6 +474,7 @@ class mainApp:
         if frame_name == FrameName.READY:
             self.current_frame = ReadyFrame(self.root, self)
         elif frame_name == FrameName.GAME:
+            self.start_time = time.time()
             self.current_frame = GameFrame(self.root, self)
         elif frame_name == FrameName.RESULT:
             self.current_frame = ResultFrame(self.root, self)
