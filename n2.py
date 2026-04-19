@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 from base import ImageCache
-HOVER_TIME = 0.5
+HOVER_TIME = 0.3
 BUTTON_SIZE_RATIO = 0.12#ボタンサイズ 画面横幅の何倍か
 SETTING_SIZE_RATIO = 0.12
 ARC_RADIUS = 30
@@ -471,7 +471,7 @@ class mainApp:
         self.current_frame = None#現在表示中のフレーム
         self.start_time = time.time()
         self.end_time = None
-        self.hover_time = 0.5#滞留時間
+        self.hover_time = HOVER_TIME#滞留時間
         self.button_size_ratio = BUTTON_SIZE_RATIO
         self.show_frame(FrameName.READY)
 
